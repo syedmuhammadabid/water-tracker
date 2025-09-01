@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Optional custom styles */
 body {
-  @apply bg-gray-50 text-gray-800;
+  @apply bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen;
+  font-family: 'Inter', sans-serif;
 }
