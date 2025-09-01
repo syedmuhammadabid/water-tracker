@@ -24,10 +24,17 @@ export default function Summary() {
 
   const monthWiseBreakdown: Record<string, number> = records.reduce((acc, record) => {
     const date = new Date(record.date);
-    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`; // e.g., "2023-10"
+    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
     acc[monthKey] = (acc[monthKey] || 0) + record.bottles;
     return acc;
   }, {});
+
+  // Helper to format month string
+  function formatMonth(monthKey: string) {
+    const [year, month] = monthKey.split("-");
+    const date = new Date(Number(year), Number(month) - 1);
+    return `${date.toLocaleString("default", { month: "short" })} ${year}`;
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 p-6 max-w-md mx-auto shadow-lg rounded-lg">
@@ -62,7 +69,7 @@ export default function Summary() {
               key={month}
               className="p-4 bg-gray-200 rounded-lg shadow-md flex justify-between hover:bg-gray-300 transition-colors"
             >
-              <span className="text-gray-700 font-medium">{month}</span>
+              <span className="text-gray-700 font-medium">{formatMonth(month)}</span>
               <span className="font-bold text-gray-900">{total}</span>
             </li>
           ))}
