@@ -36,6 +36,33 @@ export default function Summary() {
     return `${date.toLocaleString("default", { month: "short" })} ${year}`;
   }
 
+  function exportToCSV(records: { count: number; date: string }[]) {
+    if (!records || records.length === 0) return;
+
+    // CSV Header
+    const headers = ["Date", "Bottles"];
+
+    // CSV Rows
+    const rows = records.map(r => [r.date, r.count]);
+
+    // Combine into CSV format
+    const csvContent =
+      [headers, ...rows]
+        .map(row => row.join(","))
+        .join("\n");
+
+    // Create a blob and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "water-tracker.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 p-6 max-w-md mx-auto shadow-lg rounded-lg">
       <h1 className="text-4xl font-extrabold mb-6 text-center text-green-700">
@@ -60,9 +87,24 @@ export default function Summary() {
       </div>
 
       <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-          Month-wise Breakdown
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Month-wise Breakdown
+          </h2>
+          <button
+            onClick={() =>
+              exportToCSV(
+                Object.entries(monthWiseBreakdown).map(([month, total]) => ({
+                  count: total,
+                  date: formatMonth(month),
+                }))
+              )
+            }
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md font-medium transition-colors"
+          >
+            Export to CSV
+          </button>
+        </div>
         <ul className="space-y-3">
           {Object.entries(monthWiseBreakdown).map(([month, total]) => (
             <li
